@@ -32,5 +32,129 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-	//// Replace this comment with your code.
+	
+    
+    // Instruction Mux
+    Mux16(
+        a = instruction,
+        b = ALUout,
+        sel = instruction[15],
+        out = MuxInstructionOut
+    );
+    
+    And(a = instruction[15],
+        b = instruction[5],
+        out = loadAtmp);
+    Not(in = instruction[15],
+        out = notIns15);
+    Or(a = loadAtmp,
+        b = notIns15,
+        out = loadA);
+    
+//    And(a = instruction[15],
+//        b = instruction[5],
+//        out = loadA);
+    // A register
+    ARegister(
+        in = MuxInstructionOut,
+        load = loadA,
+        out = Aout, // ALU Mux and PC
+        out[0..14] = addressM        
+    );
+    
+    // ALU Mux
+    Mux16(
+        a = Aout,
+        b = inM,
+        sel = instruction[12],
+        out = MuxAMout
+    );    
+    
+    // DRegister load
+    And(a = instruction[15],
+        b = instruction[4],
+        out = loadDtmp);
+    Or(a = loadDtmp,
+        b = notIns15,
+        out = loadD);
+    
+    
+    // D register
+    DRegister(
+        in = ALUout,
+        load = loadDtmp,
+        out = Dout    
+    );
+    
+    // ALU
+    ALU(
+        x = Dout,
+        y = MuxAMout,
+        zx = instruction[11],
+        nx = instruction[10],
+        zy = instruction[9],
+        ny = instruction[8],
+        f = instruction[7],
+        no = instruction[6],
+        
+        out = outM,
+        out = ALUout,
+        zr = zr,
+        ng = ng
+    );
+    
+    
+    
+    
+    
+    // Program Counter
+    
+    // Unnecessary?
+    Not(in = j, out = notj);
+    Not(in = reset, out = notreset);
+    And(a = notj, b = notreset, out = inc);
+    // End unnecessary?
+    
+    PC(
+        in = Aout,
+        inc = inc,
+        load = j,
+        reset = reset,
+        out[0..14] = pc
+    );
+    
+    //---------------
+    // Logic handling
+    
+    // j logic
+    // PC inc
+    
+    // 100 JLT
+    And(a = instruction[2],
+        b = ng,
+        out = JLT);
+    // 010 JEQ
+    And(a = instruction[1],
+        b = zr,
+        out = JEQ);
+    // 001 JGT
+    Or(a = ng, b = zr, out = ngZr);
+    Not(in = ngZr, out = NotNgZr);
+    And(a = instruction[0],
+        b = NotNgZr,
+        out = JGT);
+    
+    Or(a = JLT,
+        b = JEQ,
+        out = JLE);
+    Or(a = JGT,
+        b = JLE,
+        out = jout);
+    And(a = jout, 
+        b = instruction[15],
+        out = j);
+        
+
+    And(a = instruction[3], b = instruction[15], out = writeM);
+
 }

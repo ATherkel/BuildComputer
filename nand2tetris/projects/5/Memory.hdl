@@ -25,5 +25,53 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-	//// Replace this comment with your code.
+    
+    Not(in = address[13], out = notAddr13);
+    Not(in = address[14], out = notAddr14);
+    
+    // addrRAM -- if address bit 14 and 13 are 0, the address
+    // points at the RAM chip. 
+    // If and only if the RAM chip is addressed and load = 1, then load the RAM. 
+    And(a = load, b = notAddr14, out = addrRAM);
+    And(a = load, b = addrRAM, out = loadRAM);
+    
+    // addrScreen - if address bit 14 is 1 and 13 is 0, the address
+    // points at the screen chip.
+    // Iff the screen chip is addressed and load = 1 then load screen.
+    And(a = address[14], b = notAddr13, out = addrScreen);
+    And(a = load, b = addrScreen, out = loadScreen);
+    
+    // If address bit 14 and 13 are 1, keyboard is addressed.
+    // If other bits are also 1, input is invalid. 
+    And(a = address[14], b = address[13], out = and1413);
+    
+    Or8Way(in = address[0..7], out = addr07);
+    Or8Way(in[0..4] = address[8..12], in[5..7] = false, out = addr812);
+    Or(a = addr07, b = addr812, out = OrAddrLsb);
+    Not(in = OrAddrLsb, out = NotOrAddrLsb);
+    
+    
+    RAM16K(
+        in = in,
+        load = loadRAM,
+        address = address[0..13],
+        out = outRAM
+        );
+
+    Screen(
+        in = in,
+        load = loadScreen,
+        address = address[0..12],
+        out = outScreen);
+        
+    Keyboard(
+        out = outKBD);
+        
+    Mux4Way16(
+        a = outRAM,     // sel = 00 
+        b = outRAM,     // sel = 01
+        c = outScreen,  // sel = 10
+        d = outKBD,     // sel = 11
+        sel = address[13..14],
+        out = out);
 }
