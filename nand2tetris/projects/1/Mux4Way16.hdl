@@ -14,5 +14,21 @@ CHIP Mux4Way16 {
     OUT out[16];
     
     PARTS:
-    //// Replace this comment with your code.
+    Not(in = sel[0], out = notsel0);
+    Not(in = sel[1], out = notsel1);
+    
+    Nand(a = notsel1, b = notsel0, out = sel00);
+    Nand(a = notsel1, b = sel[0], out = sel01);
+    Nand(a = sel[1], b = notsel0, out = sel10);
+    Nand(a = sel[1], b = sel[0], out = sel11);
+    
+    Mux16(a = a, b = false, sel = sel00, out = sela);
+    Mux16(a = b, b = false, sel = sel01, out = selb);
+    Mux16(a = c, b = false, sel = sel10, out = selc);
+    Mux16(a = d, b = false, sel = sel11, out = seld);
+    
+    Or16(a = sela, b = selb, out = orAb);
+    Or16(a = selc, b = seld, out = orCd);
+    
+    Or16(a = orAb, b = orCd, out = out);
 }
