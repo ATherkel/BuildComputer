@@ -5,6 +5,7 @@
 # https://stackoverflow.com/a/37867717/3560695
 
 import re
+import sys
 
 # Test packages
 import os ## Testing purposes
@@ -22,60 +23,146 @@ import os ## Testing purposes
 
 
 ## Read lines method
-def readlines(filename : str, comment = "//"):
+def readlines(filename : str):
     """
-Returns a list of the lines from an input filename. Removes comments and blank lines.
+Returns a list of the lines from an input filename.
 
 Parameters
 ----
 filename : str
     File path and file name of file to be read.
-comment : str
-    Comment identifier.
     """
-    import re
     file = open(filename, 'r')
     lines = file.readlines()
-    
-    ## Remove comments
+    # print(lines)
+    return lines
+
+def removeComments(input_data : str|list, comment : str = "//") -> str|list:
+    """ Returns the input stripped for comments. 
+    If the first argument is a list, iterate over all elements. 
+    Does not handle multiline comments. 
+
+    Parameters
+    ----
+    input_data : str or list of str
+        Input string or list of strings.
+    comment : str, optional
+        Comment token. Defaults to "//". Everything after this token is removed.
+    """
+    # Compile the regular expression pattern
     re_comment = re.escape(comment)
-    # print(re_comment)
-    lines_nocomment = [re.sub(r'(\s*'+re_comment+'.*)','',line) for line in lines]
-    # print(lines_nocomment)
-    ## Remove empty lines
-    lines_filtered = [line for line in lines_nocomment if line.strip()]
-    # print(lines_filtered)
-    return lines_filtered
+    regex = r'\s*' + re_comment + '.*'
+
+    # Initialize output variable
+    output = None
+
+    if isinstance(input_data, str):
+        output = re.sub(regex, '', input_data)
+    elif isinstance(input_data, list):
+        data_nocomment = [re.sub(regex, '', line) for line in input_data]
+        ## Remove empty lines
+        output = [line for line in data_nocomment if line.strip()]
+    else:
+        raise ValueError("input_data must be a string or list of strings.") 
+    return output
+
+def writelines(input_data : str | list, filename) -> None:
+    """
+    Write the given string or list of strings to the specified file.
+
+    Args:
+        input_data (str | list): The string or list of strings to write to the file.
+        filename (str): The name of the file to write to.
+
+    Raises:
+        TypeError: If input_data is neither a string nor a list, or if filename is not a string.
+        ValueError: If filename is an empty string.
+        IOError: If there is an issue writing to the file.
+
+    Returns:
+        None
+    """
+    # Check input types
+    if not isinstance(input_data, (str, list)):
+        raise TypeError("Input data must be a string or a list of strings")
+    if not isinstance(filename, str):
+        raise TypeError("Filename must be a string")
+    
+    # Check filename is not empty
+    if not filename:
+        raise ValueError("Filename cannot be an empty string")
+
+    # Open the file in write mode
+    try:
+        with open(filename, 'w') as file:
+            # Write data to the file
+            if isinstance(input_data, str):
+                file.write(input_data)
+            else:
+                file.writelines(input_data)
+    except IOError as e:
+        raise IOError("Error writing to file: " + str(e))
 
 
-class parser:
+
+def parser():
     """ parses each VM command into its lexical elements. """
 
-class codewriter:
-    """ writes the assembly code that
-      implements the parsed command """
+    ## ---- VM language: ----
+
+    ## Arithmetic / Logical commands
+
+    # add
+    # sub
+    # neg
+    # eq
+    # gt
+    # lt
+    # and
+    # or
+    # not
+
+    ## Memory access commands
+
+    # pop <segment> <i>
+    # push <segment> <i>
 
 
-class main:
-    """ drives the VMTranslator process. """
+def codewriter():
+    """ writes the assembly code that implements the parsed command. """
 
 
 
-## ---- VM language: ----
 
-## Arithmetic / Logical commands
 
-# add
-# sub
-# neg
-# eq
-# gt
-# lt
-# and
-# or
-# not
+def main(filename : str = None):
+    """
 
-## Memory access commands
+"""
+    # Check if the correct number of command-line arguments are provided
+    if filename is None:
+        if len(sys.argv) != 2:
+            print("Usage: py VMTranslator.py <filename>")
+            return
+        filename = sys.argv[1]
 
-# pop <segment> <i>
-# push <segment> <i>
+    # Read file
+    lines = readlines(filename)
+    # Remove comments
+    lines_nocomment = removeComments(lines)
+
+    # Call functions from different modules to perform the main tasks
+    parsed_data = parser(filename)
+    translated_data = codewriter(parsed_data)
+
+    ## This should write to filename.asm
+    writelines(translated_data, )
+    return translated_data
+
+
+
+if __name__ == "__main__":
+    main()
+
+
+
