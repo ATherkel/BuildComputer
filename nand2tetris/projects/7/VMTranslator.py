@@ -51,6 +51,7 @@ def removeComments(input_data : str|list, comment : str = "//") -> str|list:
     """
     # Compile the regular expression pattern
     re_comment = re.escape(comment)
+    # https://regex101.com/r/BH3D67/1
     regex = r'\s*' + re_comment + '.*'
 
     # Initialize output variable
