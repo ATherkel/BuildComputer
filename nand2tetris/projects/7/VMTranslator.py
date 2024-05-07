@@ -1,6 +1,12 @@
 ## How program is supposed to be run:
 # https://www.coursera.org/learn/nand2tetris2/lecture/qmJl3/unit-1-8-vm-translator-proposed-implementation
 
+## Test stuff START
+
+import os
+
+os.getcwd()
+## Test stuff END
 
 
 
