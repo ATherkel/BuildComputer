@@ -1,4 +1,4 @@
-## How program is supposed to be run:
+## How the program is supposed to be run:
 # https://www.coursera.org/learn/nand2tetris2/lecture/qmJl3/unit-1-8-vm-translator-proposed-implementation
 
 #### ---- import ----
@@ -19,8 +19,6 @@ import os ## Testing purposes
 
 
 ## Test stuff END
-
-
 
 
 ## Read lines method
@@ -50,6 +48,16 @@ comment : str
     return lines_filtered
 
 
+class parser:
+    """ parses each VM command into its lexical elements. """
+
+class codewriter:
+    """ writes the assembly code that
+      implements the parsed command """
+
+
+class main:
+    """ drives the VMTranslator process. """
 
 
 
