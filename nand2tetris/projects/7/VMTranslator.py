@@ -181,8 +181,9 @@ def main(filename : str = None):
     translated_data = codewriter(parsed_data)
 
     # https://regex101.com/r/SkENd5/1
-    
-    writelines(translated_data, )
+
+    out_filename = changeExtension(filename, "asm")
+    writelines(input_data = translated_data, filename = out_filename)
     return translated_data
 
 
