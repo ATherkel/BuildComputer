@@ -37,7 +37,7 @@ filename : str
     # print(lines)
     return lines
 
-def removeComments(input_data : str|list, comment : str = "//") -> str|list:
+def removeComments(input_data : str | list, comment : str = "//") -> str | list:
     """ Returns the input stripped for comments. 
     If the first argument is a list, iterate over all elements. 
     Does not handle multiline comments. 
@@ -66,6 +66,32 @@ def removeComments(input_data : str|list, comment : str = "//") -> str|list:
     else:
         raise ValueError("input_data must be a string or list of strings.") 
     return output
+
+# https://chat.openai.com/share/40c7964c-0f2f-44d2-81c7-e88d6a1868a1
+def changeExtension(string : str, newExtension : str):
+    """
+    """
+    if not isinstance(string, str):
+        raise TypeError("Input <string> must be a string")
+    if not isinstance(newExtension, str):
+        raise TypeError("Input <newExtension> must be a string")
+    
+    # Regex pattern to capture the base name and extension
+    # https://regex101.com/r/SkENd5/1
+    regex = r"^(?P<base>[^.].*\.)(?P<extension>\w+)$|(?P<fullname>^.*$)"
+
+    # Replace the extension with the new extension
+    new_string = re.sub(
+        regex, 
+        lambda m: (
+            m.group('base') + newExtension 
+            if m.group('base') 
+            else m.group('fullname')
+        ), 
+        string)
+    
+    return new_string
+
 
 def writelines(input_data : str | list, filename) -> None:
     """
@@ -134,8 +160,6 @@ def codewriter():
 
 
 
-
-
 def main(filename : str = None):
     """
 
@@ -156,7 +180,8 @@ def main(filename : str = None):
     parsed_data = parser(filename)
     translated_data = codewriter(parsed_data)
 
-    ## This should write to filename.asm
+    # https://regex101.com/r/SkENd5/1
+    
     writelines(translated_data, )
     return translated_data
 
