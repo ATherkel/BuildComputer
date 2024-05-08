@@ -16,8 +16,6 @@ import os ## Testing purposes
 # os.getcwd()
 
 
-# filename = 'nand2tetris/projects/7/StackArithmetic/SimpleAdd/SimpleAdd.vm'
-
 
 ## Test stuff END
 
@@ -132,9 +130,40 @@ def writelines(input_data : str | list, filename) -> None:
 
 
 
-def parser():
+
+def parser(a):
     """ parses each VM command into its lexical elements. """
 
+    ## ---- Constructor ----
+    # Read file
+    lines = readlines(filename)
+    # Remove comments
+    lines_nocomment = removeComments(lines)
+
+
+    def commandType() -> str:
+        """
+        Returns a constant representing the type of the current command. 
+        C_ARITHMETIC is returned for all the arithmetic/logical commands.
+
+        Returns C_ARITHMETIC, C_PUSH, C_POP,
+        C_LABEL, C_GOTO, C_IF, C_FUNCTION, 
+        C_RETURN, C_CALL
+        """
+        ...
+
+    def arg1() -> str:
+        """
+
+        Returns string
+        """
+        ...
+    def arg2() -> int:
+        """
+        
+        """
+        ...
+    
     ## ---- VM language: ----
 
     ## Arithmetic / Logical commands
@@ -155,8 +184,29 @@ def parser():
     # push <segment> <i>
 
 
-def codewriter():
+def codewriter(a):
     """ writes the assembly code that implements the parsed command. """
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -171,15 +221,13 @@ def main(filename : str = None):
             return
         filename = sys.argv[1]
 
-    # Read file
-    lines = readlines(filename)
-    # Remove comments
-    lines_nocomment = removeComments(lines)
+
 
     # Call functions from different modules to perform the main tasks
     parsed_data = parser(filename)
     translated_data = codewriter(parsed_data)
 
+    translated_data = lines_nocomment
     # https://regex101.com/r/SkENd5/1
 
     out_filename = changeExtension(filename, "asm")
@@ -192,4 +240,5 @@ if __name__ == "__main__":
     main()
 
 
-
+filename = 'nand2tetris/projects/7/StackArithmetic/SimpleAdd/SimpleAdd.vm'
+main(filename)
