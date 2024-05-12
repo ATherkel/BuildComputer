@@ -1,5 +1,6 @@
 import re
 
+from dict import dict
 
 
 def parser(filename : str):
