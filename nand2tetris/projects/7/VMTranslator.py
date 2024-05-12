@@ -7,6 +7,10 @@
 import re
 import sys
 
+## Functions
+import Functions as f
+
+
 # Test packages
 import os ## Testing purposes
 
@@ -20,50 +24,6 @@ import os ## Testing purposes
 ## Test stuff END
 
 
-## Read lines method
-def readlines(filename : str):
-    """
-Returns a list of the lines from an input filename.
-
-Parameters
-----
-filename : str
-    File path and file name of file to be read.
-    """
-    file = open(filename, 'r')
-    lines = file.readlines()
-    # print(lines)
-    return lines
-
-def removeComments(input_data : str | list, comment : str = "//") -> str | list:
-    """ Returns the input stripped for comments. 
-    If the first argument is a list, iterate over all elements. 
-    Does not handle multiline comments. 
-
-    Parameters
-    ----
-    input_data : str or list of str
-        Input string or list of strings.
-    comment : str, optional
-        Comment token. Defaults to "//". Everything after this token is removed.
-    """
-    # Compile the regular expression pattern
-    re_comment = re.escape(comment)
-    # https://regex101.com/r/BH3D67/1
-    regex = r'\s*' + re_comment + '.*'
-
-    # Initialize output variable
-    output = None
-
-    if isinstance(input_data, str):
-        output = re.sub(regex, '', input_data)
-    elif isinstance(input_data, list):
-        data_nocomment = [re.sub(regex, '', line) for line in input_data]
-        ## Remove empty lines
-        output = [line for line in data_nocomment if line.strip()]
-    else:
-        raise ValueError("input_data must be a string or list of strings.") 
-    return output
 
 # https://chat.openai.com/share/40c7964c-0f2f-44d2-81c7-e88d6a1868a1
 def changeExtension(string : str, newExtension : str):
@@ -131,96 +91,6 @@ def writelines(input_data : str | list, filename) -> None:
 
 
 
-def parser(a):
-    """ parses each VM command into its lexical elements. """
-
-    ## ---- Constructor ----
-    # Read file
-    lines = readlines(filename)
-    # Remove comments
-    lines_nocomment = removeComments(lines)
-
-
-    def commandType() -> str:
-        """
-        Returns a constant representing the type of the current command. 
-        C_ARITHMETIC is returned for all the arithmetic/logical commands.
-
-        Returns C_ARITHMETIC, C_PUSH, C_POP,
-        C_LABEL, C_GOTO, C_IF, C_FUNCTION, 
-        C_RETURN, C_CALL
-        """
-        ...
-
-    def arg1() -> str:
-        """
-
-        Returns string
-        """
-        ...
-    def arg2() -> int:
-        """
-
-        """
-        ...
-    
-    ## ---- VM language: ----
-
-    ## Arithmetic / Logical commands
-
-    # add
-    # sub
-    # neg
-    # eq
-    # gt
-    # lt
-    # and
-    # or
-    # not
-
-    ## Memory access commands
-
-    # pop <segment> <i>
-    # push <segment> <i>
-
-
-def codewriter(a):
-    """ writes the assembly code that implements the parsed command. """
-    def constructor():
-        """
-        Arguments
-            Output file / stream
-        Function
-            Opens the output file / stream and gets ready to write into it.
-        """
-    def writeArithmetic():
-        """
-        Arguments
-            command (string)
-        Function
-            Writes to the output file the assembly code that implements the given arithmetic command.
-            """
-    def writePushPop(command, segment : str, index : int):
-        """
-        Arguments
-        ----
-            command (C_PUSH or C_POP)
-            segment : str
-            index : int
-        Function
-        ----
-        Writes to the output file the assembly code that implements the given command,
-        where command is either C_PUSH or C_POP.
-        """
-    def close():
-        """
-        Function
-        ----
-        Closes the output file.
-
-        Likely redundant for my method.
-        """
-
 
 
 
@@ -257,10 +127,9 @@ def main(filename : str = None):
 
 
     # Call functions from different modules to perform the main tasks
-    parsed_data = parser(filename)
-    translated_data = codewriter(parsed_data)
+    parsed_data = f.parser(filename)
+    translated_data = f.codewriter(parsed_data)
 
-    translated_data = parsed_data
     # https://regex101.com/r/SkENd5/1
 
     out_filename = changeExtension(filename, "asm")
