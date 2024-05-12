@@ -1,12 +1,12 @@
-// ---- push segment i
+// ---- push {segment} {index} ----
+
 // addr = segment + i, *SP = *addr, SP++
 
 
-
 // addr <- SegmentPointer + i
-@i
+@{index}
 D = A
-@segment
+@{segmentPointer}
 D = D + M
 
 // RAM[SP] = RAM[addr]

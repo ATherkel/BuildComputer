@@ -1,10 +1,10 @@
-// ---- pop segment i
+//-- pop {segment} {index} ----
 // addr = segment + i, SP--, *addr = *SP
 
 // addr <- segmentPointer + i
-@i
+@{index}
 D = A
-@segment
+@{segmentPointer}
 D = D + M // D = segment + i
 
 // SP--
@@ -12,15 +12,15 @@ D = D + M // D = segment + i
 M = M - 1
 
 // RAM[addr] <- RAM[SP]
-// Store D in THIS
-// i.e. *THIS = addr
-@THIS
+// Store D in R13
+// i.e. *R13 = addr
+@R13
 M = D
 // D = RAM[SP]
 @SP
 A = M
 D = M
-// *THIS 
-@THIS
+// *R13 
+@R13
 A = M
 M = D
