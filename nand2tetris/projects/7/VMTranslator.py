@@ -260,7 +260,7 @@ def main(filename : str = None):
     parsed_data = parser(filename)
     translated_data = codewriter(parsed_data)
 
-    translated_data = lines_nocomment
+    translated_data = parsed_data
     # https://regex101.com/r/SkENd5/1
 
     out_filename = changeExtension(filename, "asm")
