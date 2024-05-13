@@ -36,14 +36,18 @@ class parser:
         FileNotFoundError
             If the specified file does not exist.
         """
-        try:
-            file = open(filename, 'r')
-            self.lines = file.readlines()
-        except FileNotFoundError:
-                raise FileNotFoundError(f"File does not exist. Input file string: '{filename}")
-        self.current_command = None
+
+        # We need the filename to write to a similarly named file. 
+        self.filename = filename
+        # Open the file for reading the lines. 
+        self.file = open(filename, 'r')
+        
+        ## Initialize current line
+        self.current_line = self.file.readline().strip()
+        self.next_line = self.file.readline().strip()
 
 
+    @property
     def hasMoreCommands(self) -> bool:
         """
         Arguments
@@ -56,12 +60,32 @@ class parser:
         
         Function
         ----
+        Are there more commands in the input?
+        """
+        return bool(self.instruction)
+    
+    def instruction(self, line = None) -> None:
+        line = line if line is not None else self.filename.readline().strip()
+        self.instruction = line.split("//")[0].strip().split()
+
+    def advance(self) -> None:
+        """
+        Arguments
+        ----
+        None
+
+        Returns
+        ----
+        None
+
+        Function
+        ----
         Reads the next command from the input and makes it the current command. 
         Should be called only if hasMoreCommands() is true.
         Initially there is no current command.
         """
-        return bool(self.file.peek())
-
+        self.current_line = self.next_line
+        self.next_line = self.file.readline().strip()
 
     def commandType(self) -> str:
         """
