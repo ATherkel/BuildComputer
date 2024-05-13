@@ -5,29 +5,35 @@
 #### ---- import ----
 # https://stackoverflow.com/a/37867717/3560695
 
-import re
-import sys
+import importlib.util
 
-
-## Add this project's location to path
-## for module imports.
-sys.path.append("nand2tetris\projects\7\VMTranslator")
-
-## Functions
-from src.codewriter import codewriter
-from src.parser import parser
-
-
-# Test packages
-
-
-## Test stuff START
-
-# os.getcwd()
+## Import parser
+## We have to use import_module since the path contains an illegal directory name (7). 
+parser_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.parser.parser")
+Parser = parser_module.parser
 
 
 
-## Test stuff END
+
+#### ---- main ----
+
+#def main():
+parser = Parser("nand2tetris/projects/7/StackArithmetic/SimpleAdd/SimpleAdd.vm")
+
+parser.hasMoreCommands()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -119,7 +125,7 @@ def writelines(input_data : str | list, filename) -> None:
 
 
 
-def main(filename : str = None):
+def main_old(filename : str = None):
     """
 
 """
