@@ -2,18 +2,20 @@
 # https://www.coursera.org/learn/nand2tetris2/lecture/qmJl3/unit-1-8-vm-translator-proposed-implementation
 
 
-## Add this project's location to path
-## for module imports.
-sys.path.append("nand2tetris/projects/7")
-
 #### ---- import ----
 # https://stackoverflow.com/a/37867717/3560695
 
 import re
 import sys
 
+
+## Add this project's location to path
+## for module imports.
+sys.path.append("nand2tetris\projects\7\VMTranslator")
+
 ## Functions
-import Functions as f
+from src.codewriter import codewriter
+from src.parser import parser
 
 
 # Test packages
@@ -131,8 +133,8 @@ def main(filename : str = None):
 
 
     # Call functions from different modules to perform the main tasks
-    parsed_data = f.parser(filename)
-    translated_data = f.codewriter(parsed_data)
+    parsed_data = parser(filename)
+    translated_data = codewriter(parsed_data)
 
     # https://regex101.com/r/SkENd5/1
 
