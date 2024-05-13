@@ -1,4 +1,4 @@
-segment = dict = {
+segment = {
     "local" : "LCL",
     "argument" : "ARG",
     "THIS" : "THIS",

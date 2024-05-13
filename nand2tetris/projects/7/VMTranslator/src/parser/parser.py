@@ -1,9 +1,12 @@
 import re
 
-from dict import dict
+
+## Import segment dictionary
+from src.parser.segment import *
 
 
-def parser(filename : str):
+
+class parser:
     """
     Parses each VM command into its lexical elements. 
     
@@ -11,14 +14,8 @@ def parser(filename : str):
     ----
     filename : str  - A string containing the path to the VM file. """
 
-    ## ---- Constructor ----
-    # Read file
-    lines = readlines(filename)
-    # Remove comments
-    lines_nocomment = removeComments(lines)
-
-
-    def Constructor(filename : str) -> None:
+    
+    def __init__(self, filename : str) -> None:
         """
         Arguments
         ----
@@ -32,10 +29,11 @@ def parser(filename : str):
         ----
         Opens the input file/stream and gets ready to parse it.
         """
-        ...
+        self.file = open(filename, 'r')
+        self.current_command = None
 
 
-    def hasMoreCommands() -> bool:
+    def hasMoreCommands(self) -> bool:
         """
         Arguments
         ----
@@ -51,9 +49,10 @@ def parser(filename : str):
         Should be called only if hasMoreCommands() is true.
         Initially there is no current command.
         """
+        return bool(self.file.peek())
 
 
-    def commandType() -> str:
+    def commandType(self) -> str:
         """
         Arguments
         ----
@@ -70,9 +69,20 @@ def parser(filename : str):
         C_ARITHMETIC is returned for all the arithmetic/logical commands.
 
         """
-        ...
+        if self.current_command.startswith("push"):
+            return "C_PUSH"
+        elif self.current_command.startswith("pop"):
+            return "C_POP"
+        elif self.current_command in [
+            "add", "sub", "neg",
+            "eq", "gt", "lt",
+            "and", "or", "not"]:
+            return "C_ARITHMETIC"
+        
+        else:
+            raise ValueError(f"Current command invalid: Cannot parse '{self.current_command}'")
 
-    def arg1() -> str:
+    def arg1(self) -> str:
         """
         Arguments
         ----
@@ -89,9 +99,14 @@ def parser(filename : str):
         is returned.
         Should not be called if the current command is C_RETURN.
         """
-        ...
+        if self.commandType() == "C_ARITHMETIC":
+            out = self.current_command
+        else:
+            out = self.current_command.split()[1]
         
-    def arg2() -> int:
+        return out
+        
+    def arg2(self) -> int:
         """
         Arguments
         ----
@@ -107,8 +122,14 @@ def parser(filename : str):
         Should be called only if the current command is
             C_PUSH, C_POP, C_FUNCTION or C_CALL.
         """
-        ...
+        if self.commandType() in ["C_PUSH", "C_POP", "C_FUNCTION", "C_CALL"]:
+            return int(self.current_command.split()[2])
+        else:
+            return ValueError(f"arg2() called on invalid command type: '{self.current_command}'")
     
+    def close(self) -> None:
+        self.file.close()
+        
     ## ---- VM language: ----
 
     ## Arithmetic / Logical commands
