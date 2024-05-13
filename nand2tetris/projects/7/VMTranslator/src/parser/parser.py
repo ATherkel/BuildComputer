@@ -1,8 +1,10 @@
 import re
-
+import importlib.util
 
 ## Import segment dictionary
-from src.parser.segment import *
+## We have to use import_module since the path contains an illegal directory name (7). 
+segment_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.parser.segment")
+segment = segment_module.segment
 
 
 
@@ -14,22 +16,31 @@ class parser:
     ----
     filename : str  - A string containing the path to the VM file. """
 
-    
     def __init__(self, filename : str) -> None:
         """
         Arguments
         ----
-        Input file / stream
+        filename : str
+            Input file / stream
 
         Returns
         ----
-        N/A
+        None
 
         Function
         ----
         Opens the input file/stream and gets ready to parse it.
+
+        Raises
+        ----
+        FileNotFoundError
+            If the specified file does not exist.
         """
-        self.file = open(filename, 'r')
+        try:
+            file = open(filename, 'r')
+            self.lines = file.readlines()
+        except FileNotFoundError:
+                raise FileNotFoundError(f"File does not exist. Input file string: '{filename}")
         self.current_command = None
 
 
@@ -86,7 +97,7 @@ class parser:
         """
         Arguments
         ----
-        N/A
+        None
 
         Returns
         ----
@@ -110,7 +121,7 @@ class parser:
         """
         Arguments
         ----
-        N/A
+        None
 
         Returns
         ----
@@ -151,54 +162,54 @@ class parser:
 
 
 
-## ---- readlines ----
+    ## ---- readlines ----
 
-## Read lines method
-def readlines(filename : str):
-    """
-Returns a list of the lines from an input filename.
-
-Parameters
-----
-filename : str
-    File path and file name of file to be read.
-    """
-    file = open(filename, 'r')
-    lines = file.readlines()
-    # print(lines)
-    return lines
-
-
-
-
-## ---- removeComments ----
-
-def removeComments(input_data : str | list, comment : str = "//") -> str | list:
-    """ Returns the input stripped for comments. 
-    If the first argument is a list, iterate over all elements. 
-    Does not handle multiline comments. 
+    ## Read lines method
+    def readlines(filename : str):
+        """
+    Returns a list of the lines from an input filename.
 
     Parameters
     ----
-    input_data : str or list of str
-        Input string or list of strings.
-    comment : str, optional
-        Comment token. Defaults to "//". Everything after this token is removed.
-    """
-    # Compile the regular expression pattern
-    re_comment = re.escape(comment)
-    # https://regex101.com/r/BH3D67/1
-    regex = r'\s*' + re_comment + '.*'
+    filename : str
+        File path and file name of file to be read.
+        """
+        file = open(filename, 'r')
+        lines = file.readlines()
+        # print(lines)
+        return lines
 
-    # Initialize output variable
-    output = None
 
-    if isinstance(input_data, str):
-        output = re.sub(regex, '', input_data)
-    elif isinstance(input_data, list):
-        data_nocomment = [re.sub(regex, '', line) for line in input_data]
-        ## Remove empty lines
-        output = [line for line in data_nocomment if line.strip()]
-    else:
-        raise ValueError("input_data must be a string or list of strings.") 
-    return output
+
+
+    ## ---- removeComments ----
+
+    def removeComments(input_data : str | list, comment : str = "//") -> (str | list):
+        """ Returns the input stripped for comments. 
+        If the first argument is a list, iterate over all elements. 
+        Does not handle multiline comments. 
+
+        Arguments
+        ----
+        input_data : str or list of str
+            Input string or list of strings.
+        comment : str, optional
+            Comment token. Defaults to "//". Everything after this token is removed.
+        """
+        # Compile the regular expression pattern
+        re_comment = re.escape(comment)
+        # https://regex101.com/r/BH3D67/1
+        regex = r'\s*' + re_comment + '.*'
+
+        # Initialize output variable
+        output = None
+
+        if isinstance(input_data, str):
+            output = re.sub(regex, '', input_data)
+        elif isinstance(input_data, list):
+            data_nocomment = [re.sub(regex, '', line) for line in input_data]
+            ## Remove empty lines
+            output = [line for line in data_nocomment if line.strip()]
+        else:
+            raise ValueError("input_data must be a string or list of strings.") 
+        return output
