@@ -16,25 +16,6 @@ class Parser:
     """
 
     def __init__(self, file) -> None:
-        """
-        Arguments
-        ----
-        filename : str
-            Input file / stream
-
-        Returns
-        ----
-        None
-
-        Function
-        ----
-        Opens the input file/stream and gets ready to parse it.
-
-        Raises
-        ----
-        FileNotFoundError
-            If the specified file does not exist.
-        """
         self.line = None        ## Initialize line.
         self.lineNo = 0         ## Initialize line number.
         self.instruction = None ## Initialize instruction.
