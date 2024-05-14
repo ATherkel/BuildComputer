@@ -5,20 +5,18 @@
 #### ---- import ----
 # https://stackoverflow.com/a/37867717/3560695
 
-import importlib.util
-import sys
+import importlib
 import re
 
 ## Import parser
 ## We have to use import_module since the path contains an illegal directory name (7). 
 parser_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.parser.parser")
+importlib.reload(parser_module)
 Parser = parser_module.parser
 
 writer_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.codewriter.codewriter")
+importlib.reload(writer_module)
 codewriter = writer_module.codewriter
-
-
-
 
 
 #### ---- main ----
@@ -45,16 +43,22 @@ def main(filename):
             if not parser.instruction:  ## If instruction is blank, skip. Line consisted only of a comment. 
                 continue
             print(f"---- Line {parser.lineNo} ----")
-            print(f"instruction = {parser.instruction}")
-            print(f"commandType() = {parser.commandType()}")
-            print(f"arg1() = {parser.arg1()}")
-            print(f"arg2() = {parser.arg2()}")
+            # print(f"instruction = {parser.instruction}")
+            # print(f"commandType() = {parser.commandType()}, type = {type(parser.commandType())}")
+            # print(f"arg1() = {parser.arg1()}")
+            # print(f"arg2() = {parser.arg2()}")
+
 
             if parser.commandType() == "C_ARITHMETIC":
                 # Write arithmetic from arithmetic.asm
                 ...
             elif parser.commandType() in ["C_PUSH", "C_POP"]:
-                writer.writePushPop(parser.commandType(), parser.arg1(), parser.arg2())                  
+                commandType = parser.commandType()
+                arg1 = parser.arg1()
+                arg2 = parser.arg2()
+#                return commandType
+                writer.writePushPop(commandType, arg1, arg2)   
+                ...
             else:
                 ...
 
@@ -63,10 +67,10 @@ def main(filename):
 
 ## Testing
 filename = '/nand2tetris/projects/7/StackArithmetic/SimpleAdd/SimpleAdd.vm'
-
 main(filename[1:])
 
-
+1+1
+dict.commandType
 
 
 

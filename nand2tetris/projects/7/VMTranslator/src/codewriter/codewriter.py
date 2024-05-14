@@ -14,8 +14,9 @@ class codewriter:
         Function
             Writes to the output file the assembly code that implements the given arithmetic command.
             """
+        print(command)
         
-    def writePushPop(command : str, segment : str, index : int):
+    def writePushPop(command : str, segment : str, index : int, wtf):
         """
         Arguments
         ----
@@ -28,12 +29,7 @@ class codewriter:
         where command is either C_PUSH or C_POP.
         """
         # Write push and pop commands from push.asm and pop.asm
-        if parser.arg1().lower() == "constant":
-            print("constant.")
-        elif parser.arg1().lower == "static":
-            print("static.")
-        else:
-            print(parser.arg1())  
+        print(f"command = '{command}', segment = {segment}, index = {index}, wtf = {wtf}")
 
     
     def close():
