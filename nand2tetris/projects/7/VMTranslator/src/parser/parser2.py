@@ -1,4 +1,10 @@
 
+import importlib
+
+dict_filepath = "nand2tetris/projects/7/VMTranslator/src/utils/dict/dict"
+dict = importlib.import_module(dict_filepath.replace("/", "."))
+
+
 class Parser:
 
     def __init__(self, filename : str = "") -> None:
