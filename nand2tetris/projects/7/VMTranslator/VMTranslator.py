@@ -14,6 +14,10 @@ import re
 parser_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.parser.parser")
 Parser = parser_module.parser
 
+writer_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.codewriter.codewriter")
+codewriter = writer_module.codewriter
+
+
 
 
 
@@ -28,11 +32,12 @@ def main(filename):
     ## https://stackoverflow.com/a/59696768/3560695
     regex = r'^(?P<path>.*[\\\/])?(?P<name>\.*.*?)(?P<extension>\.[^.]+?|)$'
 
-    filename_write = re.sub(regex, r"\1\2.asm")
+    filename_write = re.sub(regex, r"\1\2.asm", filename)
 
 
-    with open(filename, 'r') as file, open(filename_write, "w"):
+    with open(filename, 'r') as file, open(filename_write, "w") as file_write:
         parser = Parser(file)
+        writer = codewriter(file_write)
 
         while parser.hasMoreCommands(): ## As long as file has more lines, do:
             parser.advance()            ## Go to the next line in the file.
@@ -49,8 +54,7 @@ def main(filename):
                 # Write arithmetic from arithmetic.asm
                 ...
             elif parser.commandType() in ["C_PUSH", "C_POP"]:
-                # Write push and pop commands from push.asm and pop.asm
-                ...
+                writer.writePushPop(parser.commandType(), parser.arg1(), parser.arg2())                  
             else:
                 ...
 
