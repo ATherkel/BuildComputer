@@ -1,13 +1,7 @@
 
-def codewriter(a):
+class codewriter:
     """ writes the assembly code that implements the parsed command. """
-    def constructor():
-        """
-        Arguments
-            Output file / stream
-        Function
-            Opens the output file / stream and gets ready to write into it.
-        """
+
     def writeArithmetic():
         """
         Arguments
