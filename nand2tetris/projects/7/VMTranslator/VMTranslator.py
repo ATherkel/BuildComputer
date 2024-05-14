@@ -160,37 +160,3 @@ def writelines(input_data : str | list, filename) -> None:
 
 
 
-
-
-def main_old(filename : str = None):
-    """
-
-"""
-    # Check if the correct number of command-line arguments are provided
-    if filename is None:
-        if len(sys.argv) != 2:
-            print("Usage: py VMTranslator.py <filename>")
-            return
-        filename = sys.argv[1]
-
-
-
-    # Call functions from different modules to perform the main tasks
-    parsed_data = parser(filename)
-    translated_data = codewriter(parsed_data)
-
-    # https://regex101.com/r/SkENd5/1
-
-    out_filename = changeExtension(filename, "asm")
-    writelines(input_data = translated_data, filename = out_filename)
-    return translated_data
-
-
-
-if __name__ == "__main__":
-    main()
-
-
-filename = 'nand2tetris/projects/7/StackArithmetic/SimpleAdd/SimpleAdd.vm'
-main(filename)
-
