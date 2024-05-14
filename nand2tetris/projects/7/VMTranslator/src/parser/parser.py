@@ -1,11 +1,11 @@
 
 import importlib
 
-dict_filepath = "nand2tetris/projects/7/VMTranslator/src/utils/dict/dict"
-dict = importlib.import_module(dict_filepath.replace("/", "."))
+dicts_filepath = "nand2tetris/projects/7/VMTranslator/src/utils/dict/dict"
+dicts = importlib.import_module(dicts_filepath.replace("/", "."))
 
 
-class Parser:
+class parser:
     """
     - Handles the parsing of a single .vm file.
     
@@ -63,7 +63,6 @@ class Parser:
         Returns
         ----
         None
-
         Function
         ----
         Reads the next command from the input and makes it the current command. 
@@ -92,7 +91,7 @@ class Parser:
         """
 
         try:
-            return dict.commandType[self.instruction[0]]
+            return dicts.commandType[self.instruction[0]]
         except:
             raise KeyError(f"Current command invalid: Cannot parse '{self.line.strip()}' on line {self.lineNo}.")
 
