@@ -6,8 +6,11 @@
 // addr <- SegmentPointer + i
 @{index}
 D = A
+
+// Not used if segment is 'constant'
 @{segmentPointer}
-D = D + M
+A = D + M
+D = M
 
 // RAM[SP] = RAM[addr]
 @SP
