@@ -89,9 +89,9 @@ class parser:
         C_ARITHMETIC is returned for all the arithmetic/logical commands.
 
         """
-        command = self.instruction[0]
+
         try:
-            return dicts.commandType[command]
+            return dicts.commandType[self.instruction[0]]
         except:
             raise KeyError(f"Current command invalid: Cannot parse '{self.line.strip()}' on line {self.lineNo}.")
 
