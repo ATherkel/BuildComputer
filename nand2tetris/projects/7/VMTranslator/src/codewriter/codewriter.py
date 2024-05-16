@@ -19,8 +19,11 @@ class codewriter:
 
         self.Parser = parser_module.parser
 
-    @staticmethod
-    def writeArithmetic(command : str, ) -> None:
+        ## Used in some of the .asm templates.
+        self.action = None
+        self.segmentPointer = None
+
+    def writeArithmetic(self, command : str) -> None:
         """
         Arguments
             command (string)
@@ -30,9 +33,17 @@ class codewriter:
         
         ## Unary or binary operation:
         arity = dicts.arithmetic[command]
+        print(arity)
+
+        ## action is used in some of the .asm templates.
+        ## Contains Hack code for the arithmetic operations
+        self.action = dicts.arithmetic_action[command]
         
-        with open(f"nand2tetris/projects/7/VMTranslator/src/utils/asm/arithmetic_{arity}", 'r') as asm:
-            ...
+        with open(f"nand2tetris/projects/7/VMTranslator/src/utils/asm/arithmetic_{arity}.asm", 'r') as asm:
+            parser = self.Parser(asm)
+            
+            lines = self.processCommands(parser)
+        return lines
 
 
 
@@ -62,7 +73,7 @@ class codewriter:
             elif segment in ["local", "argument", "this", "that", "temp"]:
                 ## Used in some of the .asm templates.
                 ## Contains Hack name convention for segments, e.g. local is "LCL"
-                segmentPointer = dicts.segment[segment]
+                self.segmentPointer = dicts.segment[segment]
 
                 asm_location = "pushSegment.asm"
             elif segment == "static":
@@ -78,18 +89,32 @@ class codewriter:
         with open(f"nand2tetris/projects/7/VMTranslator/src/utils/asm/{asm_location}", 'r') as asm:
             parser = self.Parser(asm)
             
-            while parser.hasMoreCommands():
-                parser.advance()
-                parser.getinstruction()
-                if not parser.instruction:  ## If instruction is blank, skip. Line consisted only of a comment. 
-                    continue
-                
-                line = parser.instruction.format(**locals())
-                lines.append(line)
-                # if not parser.hasMoreCommands():
-                #     lines.append(self.newline)
+            lines = self.processCommands(parser)
         return lines
     
+    def processCommands(self, parser):
+        """
+        Arguments
+        ----
+            parser : parser object
+        Function
+        ----
+        Process commands using the provided parser object until there are no more commands.
+        """
+        lines = []
+        while parser.hasMoreCommands():
+            parser.advance()
+            parser.getinstruction()
+            if not parser.instruction:  ## If instruction is blank, skip. Line consisted only of a comment. 
+                continue
+                
+            print(parser.instruction)
+
+            line = parser.instruction.format(**locals())
+            lines.append(line)
+        
+        return lines
+
 
         
     
