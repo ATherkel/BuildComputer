@@ -92,7 +92,7 @@ class parser:
         """
 
         try:
-            return dicts.commandType[self.instruction[0]]
+            return dicts.commandType[self.VMinstruction[0]]
         except:
             raise KeyError(f"Current command invalid: Cannot parse '{self.line.strip()}' on line {self.lineNo}.")
 
@@ -114,11 +114,11 @@ class parser:
         Should not be called if the current command is C_RETURN.
         """
         if self.commandType() == "C_ARITHMETIC":
-            out = self.instruction[0]
+            out = self.VMinstruction[0]
         elif self.commandType() == "C_RETURN":
             return ValueError(f"arg1() called on invalid command type: '{self.commandType()}'")
         else:
-            out = self.instruction[1]
+            out = self.VMinstruction[1]
         
         return out
         
@@ -139,7 +139,7 @@ class parser:
             C_PUSH, C_POP, C_FUNCTION or C_CALL.
         """
         if self.commandType() in ["C_PUSH", "C_POP", "C_FUNCTION", "C_CALL"]:
-            return int(self.instruction[2])
+            return int(self.VMinstruction[2])
         else:
             return ValueError(f"arg2() called on invalid command type: '{self.commandType()}'")
     
@@ -153,8 +153,9 @@ class parser:
         """
         Splits the instruction into a list of objects
         """
-        self.instruction = self.getinstruction()
-        print(self.instruction)
+
+        # Call getinstruction to ensure instruction has been retrieved.
+        self.getinstruction()
         self.VMinstruction = self.instruction.split() 
 
 
