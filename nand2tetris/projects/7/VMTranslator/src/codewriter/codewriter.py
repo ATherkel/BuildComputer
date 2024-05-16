@@ -41,15 +41,39 @@ class codewriter:
         """
         newline = '\n'
 
+        Parser = parser_module.parser
+
+        ## Used in some of the .asm templates.
+        ## Contains Hack name convention for segments, e.g. local is "LCL"
         segmentPointer = dicts.segment[segment]
 
         # Write push and pop commands from push.asm and pop.asm
+        
+        ## First handle 'pointer' logic translation to THIS/THAT
+        if segment == "pointer":
+            segment = ["THIS", "THAT"][index]
 
         if command == "C_PUSH":
-            with open("nand2tetris/projects/7/VMTranslator/src/utils/asm/pushSegment.asm", 'r') as asm:
-                lines = f"{asm.read().replace(newline, '')}".format(**locals())
-        print(lines)
+            if segment == "constant":
+                asm_location = "pushConstant.asm"
+            elif segment in ["local", "argument", "this", "that"]:
+                asm_location = "pushSegment.asm"
+            elif segment == "static":
+                asm_location = "pushStatic.asm"
+            elif segment == "temp":
+                ...
+            elif segment == "pointer":
+                ...
+        
+        with open("nand2tetris/projects/7/VMTranslator/src/utils/asm/pushSegment.asm", 'r') as asm:
+            parser = Parser(asm)
+            
+            while parser.hasMoreCommands():
+                parser.advance()
+                parser.getinstruction()
+                if not parser.instruction:  ## If instruction is blank, skip. Line consisted only of a comment. 
+                    continue
+        return lines
 
         
-
     

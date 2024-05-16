@@ -16,10 +16,11 @@ class parser:
     """
 
     def __init__(self, file) -> None:
-        self.line = None        ## Initialize line.
-        self.lineNo = 0         ## Initialize line number.
-        self.instruction = None ## Initialize instruction.
-        self.file = file        ## functions need to be able to grab file. 
+        self.line = None            ## Initialize line.
+        self.lineNo = 0             ## Initialize line number.
+        self.instruction = None     ## Initialize instruction.
+        self.VMinstruction = None   ## Initialize VM instruction (list)
+        self.file = file            ## functions need to be able to grab file. 
 
 
     def peek(self) -> str:
@@ -143,7 +144,18 @@ class parser:
             return ValueError(f"arg2() called on invalid command type: '{self.commandType()}'")
     
     def getinstruction(self):
-        self.instruction = self.line.split("//")[0].strip().split()
+        """
+        Remove everything after the comment token (//)
+        """
+        self.instruction = self.line.split("//")[0].strip()
+
+    def getVMinstruction(self):
+        """
+        Splits the instruction into a list of objects
+        """
+        self.instruction = self.getinstruction()
+        print(self.instruction)
+        self.VMinstruction = self.instruction.split() 
 
 
 
