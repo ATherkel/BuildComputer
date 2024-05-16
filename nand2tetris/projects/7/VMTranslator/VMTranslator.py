@@ -40,9 +40,11 @@ def main(filename):
 
         while parser.hasMoreCommands(): ## As long as file has more lines, do:
             parser.advance()            ## Go to the next line in the file.
-            parser.getVMinstruction()     ## sets parser.instruction to current instruction
+            parser.getinstruction()
             if not parser.instruction:  ## If instruction is blank, skip. Line consisted only of a comment. 
                 continue
+            parser.getVMinstruction()   ## sets parser.VMinstruction to current instruction
+
             print(f"---- Line {parser.lineNo} ----")
             # print(f"instruction = {parser.instruction}")
             # print(f"commandType() = {parser.commandType()}, type = {type(parser.commandType())}")
