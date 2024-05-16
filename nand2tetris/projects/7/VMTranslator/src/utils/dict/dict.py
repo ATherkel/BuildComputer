@@ -25,5 +25,5 @@ segment = {
     "argument" : "ARG",
     "THIS" : "THIS",
     "THAT" : "THAT",
-    
+    "constant" : "CONST",
 }
