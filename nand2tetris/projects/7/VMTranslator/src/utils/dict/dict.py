@@ -23,7 +23,14 @@ commandType = {
 segment = {
     "local" : "LCL",
     "argument" : "ARG",
-    "THIS" : "THIS",
-    "THAT" : "THAT",
-    "constant" : "CONST",
+    "this" : "THIS",
+    "that" : "THAT",
+
+    "temp" : 5,
 }
+
+"""
+    "R13" : 13,
+    "R14" : 14,
+    "constant" : "CONST",
+"""
