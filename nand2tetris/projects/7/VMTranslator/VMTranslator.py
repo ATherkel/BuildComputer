@@ -11,12 +11,10 @@ import re
 ## Import parser
 ## We have to use import_module since the path contains an illegal directory name (7). 
 parser_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.parser.parser")
-importlib.reload(parser_module)
-Parser = parser_module.parser
+
 
 writer_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.codewriter.codewriter")
-importlib.reload(writer_module)
-codewriter = writer_module.codewriter
+
 
 
 #### ---- main ----
@@ -33,13 +31,16 @@ def main(filename):
     filename_write = re.sub(regex, r"\1\2.asm", filename)
 
 
+    Parser = parser_module.parser
+    codewriter = writer_module.codewriter
+
     with open(filename, 'r') as file, open(filename_write, "w") as file_write:
         parser = Parser(file)
         writer = codewriter(file_write)
 
         while parser.hasMoreCommands(): ## As long as file has more lines, do:
             parser.advance()            ## Go to the next line in the file.
-            parser.getinstruction()     ## sets parser.instruction to current instruction
+            parser.getVMinstruction()     ## sets parser.instruction to current instruction
             if not parser.instruction:  ## If instruction is blank, skip. Line consisted only of a comment. 
                 continue
             print(f"---- Line {parser.lineNo} ----")
@@ -63,11 +64,12 @@ def main(filename):
 
 
 
+importlib.reload(parser_module)
+importlib.reload(writer_module)
 
 ## Testing
 filename = '/nand2tetris/projects/7/StackArithmetic/SimpleAdd/SimpleAdd.vm'
 main(filename[1:])
-
 
 
 
