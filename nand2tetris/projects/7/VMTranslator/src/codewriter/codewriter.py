@@ -51,19 +51,20 @@ class codewriter:
         
         ## First handle 'pointer' logic translation to THIS/THAT
         if segment == "pointer":
-            segment = ["THIS", "THAT"][index]
+            segment = ["this", "that"][index] ## e.g. 'push pointer 0' means 'push this'
+            index = 0 ## Silently 'push THIS' means 'push THIS 0'
 
         if command == "C_PUSH":
             if segment == "constant":
                 asm_location = "pushConstant.asm"
-            elif segment in ["local", "argument", "this", "that"]:
+            elif segment in ["local", "argument", "this", "that", "temp"]:
                 asm_location = "pushSegment.asm"
             elif segment == "static":
                 asm_location = "pushStatic.asm"
-            elif segment == "temp":
-                ...
-            elif segment == "pointer":
-                ...
+            # elif segment == "temp":
+            #     ...
+            # elif segment == "pointer": ## Handled above
+            #     ...
         
         with open("nand2tetris/projects/7/VMTranslator/src/utils/asm/pushSegment.asm", 'r') as asm:
             parser = Parser(asm)
