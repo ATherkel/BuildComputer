@@ -56,7 +56,7 @@ def main(filename):
             if parser.commandType() == "C_ARITHMETIC":
                 # Write arithmetic from arithmetic.asm
                 arg1 = parser.arg1()
-                lines = writer.writeArithmetic(commandType, arg1)
+                lines = writer.writeArithmetic(arg1)
 
             elif parser.commandType() in ["C_PUSH", "C_POP"]:
                 arg1 = parser.arg1()
