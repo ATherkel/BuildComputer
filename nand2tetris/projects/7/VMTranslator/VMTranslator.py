@@ -45,32 +45,42 @@ def main(filename):
                 continue
             parser.getVMinstruction()   ## sets parser.VMinstruction to current instruction
 
-            print(f"---- Line {parser.lineNo} ----")
+            # print(f"---- Line {parser.lineNo} ----")
             # print(f"instruction = {parser.instruction}")
             # print(f"commandType() = {parser.commandType()}, type = {type(parser.commandType())}")
             # print(f"arg1() = {parser.arg1()}")
             # print(f"arg2() = {parser.arg2()}")
 
 
+            commandType = parser.commandType()
             if parser.commandType() == "C_ARITHMETIC":
                 # Write arithmetic from arithmetic.asm
-                ...
+                arg1 = parser.arg1()
+                lines = writer.writeArithmetic(commandType, arg1)
+
             elif parser.commandType() in ["C_PUSH", "C_POP"]:
-                commandType = parser.commandType()
                 arg1 = parser.arg1()
                 arg2 = parser.arg2()
-                print(writer.writePushPop(commandType, arg1, arg2))
-                ...
+                lines = writer.writePushPop(commandType, arg1, arg2)
             else:
                 ...
+            
+            ## lines is now the full .asm script. Write to output asm file.
+            file_write.write(f'// {parser.instruction}\n')
+            for line in lines:
+                file_write.write(f'{line}\n')
 
 
+        
+
+
+
+## Testing
+filename = '/nand2tetris/projects/7/StackArithmetic/SimpleAdd/SimpleAdd.vm'
 
 importlib.reload(parser_module)
 importlib.reload(writer_module)
 
-## Testing
-filename = '/nand2tetris/projects/7/StackArithmetic/SimpleAdd/SimpleAdd.vm'
 main(filename[1:])
 
 
