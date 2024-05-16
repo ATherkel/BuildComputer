@@ -13,3 +13,7 @@ testwriter = writer_module.codewriter("")
 
 
 testwriter.writeArithmetic("add")
+
+testwriter.writePushPop("push", "constant", 7)
+
+
