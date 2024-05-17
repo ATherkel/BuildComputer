@@ -1,11 +1,11 @@
 
-import importlib
+# import importlib
 
-dict_filepath = "nand2tetris/projects/7/VMTranslator/src/utils/dict/dict"
-dict = importlib.import_module(dict_filepath.replace("/", "."))
+# dicts_filepath = "src/utils/dict/dict"
+#dicts = importlib.import_module(dicts_filepath.replace("/", "."))
+import src.utils.dict.dict as dicts
 
-
-class Parser:
+class parser:
     """
     - Handles the parsing of a single .vm file.
     
@@ -16,10 +16,11 @@ class Parser:
     """
 
     def __init__(self, file) -> None:
-        self.line = None        ## Initialize line.
-        self.lineNo = 0         ## Initialize line number.
-        self.instruction = None ## Initialize instruction.
-        self.file = file        ## functions need to be able to grab file. 
+        self.line = None            ## Initialize line.
+        self.lineNo = 0             ## Initialize line number.
+        self.instruction = None     ## Initialize instruction.
+        self.VMinstruction = None   ## Initialize VM instruction (list)
+        self.file = file            ## functions need to be able to grab file. 
 
 
     def peek(self) -> str:
@@ -63,7 +64,6 @@ class Parser:
         Returns
         ----
         None
-
         Function
         ----
         Reads the next command from the input and makes it the current command. 
@@ -92,7 +92,7 @@ class Parser:
         """
 
         try:
-            return dict.commandType[self.instruction[0]]
+            return dicts.commandType[self.VMinstruction[0]]
         except:
             raise KeyError(f"Current command invalid: Cannot parse '{self.line.strip()}' on line {self.lineNo}.")
 
@@ -114,11 +114,11 @@ class Parser:
         Should not be called if the current command is C_RETURN.
         """
         if self.commandType() == "C_ARITHMETIC":
-            out = self.instruction[0]
+            out = self.VMinstruction[0]
         elif self.commandType() == "C_RETURN":
             return ValueError(f"arg1() called on invalid command type: '{self.commandType()}'")
         else:
-            out = self.instruction[1]
+            out = self.VMinstruction[1]
         
         return out
         
@@ -139,12 +139,24 @@ class Parser:
             C_PUSH, C_POP, C_FUNCTION or C_CALL.
         """
         if self.commandType() in ["C_PUSH", "C_POP", "C_FUNCTION", "C_CALL"]:
-            return int(self.instruction[2])
+            return int(self.VMinstruction[2])
         else:
             return ValueError(f"arg2() called on invalid command type: '{self.commandType()}'")
     
     def getinstruction(self):
-        self.instruction = self.line.split("//")[0].strip().split()
+        """
+        Remove everything after the comment token (//)
+        """
+        self.instruction = self.line.split("//")[0].strip()
+
+    def getVMinstruction(self):
+        """
+        Splits the instruction into a list of objects
+        """
+
+        # Call getinstruction to ensure instruction has been retrieved.
+        self.getinstruction()
+        self.VMinstruction = self.instruction.split() 
 
 
 
