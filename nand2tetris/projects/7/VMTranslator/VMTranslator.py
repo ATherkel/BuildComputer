@@ -6,6 +6,7 @@
 # https://stackoverflow.com/a/37867717/3560695
 
 import re
+import sys
 
 ## Import parser
 ## We have to use import_module since the path contains an illegal directory name (7). 
@@ -21,7 +22,14 @@ import src.codewriter.codewriter as cw
 #def main():
 
 
-def main(filename):
+def main(filename = None):
+
+    if filename is None:
+        # Check if the correct number of command-line arguments are provided
+        if len(sys.argv) != 2:
+            print("Usage: py VMTranslator.py <filename>")
+            return
+        filename = sys.argv[1]
     
     ## https://regex101.com/r/x0v99o/3
     ## https://stackoverflow.com/a/59696768/3560695
@@ -75,16 +83,18 @@ def main(filename):
 
 import importlib
 
-## Testing
-filename = '.../StackArithmetic/SimpleAdd/SimpleAdd.vm'
-filename = '.../StackArithmetic/Stacktest/Stacktest.vm'
+# ## Testing
+# filename = '.../StackArithmetic/SimpleAdd/SimpleAdd.vm'
+# filename = '.../StackArithmetic/Stacktest/Stacktest.vm'
+# filename = '.../StackArithmetic/Stacktest/Stacktest.vm'
 
-importlib.reload(p)
-importlib.reload(cw)
+# importlib.reload(p)
+# importlib.reload(cw)
 
-main(filename[1:])
+# main(filename[1:])
 
-
+if __name__ == "main":
+    main()
 
 
 
