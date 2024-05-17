@@ -1,13 +1,17 @@
 
-import importlib
+import sys
+# import importlib
 
-parser_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.parser.parser")
-importlib.reload(parser_module)
-
-dicts_filepath = "nand2tetris/projects/7/VMTranslator/src/utils/dict/dict"
-dicts = importlib.import_module(dicts_filepath.replace("/", "."))
+# sys.path.append("C:/Users/Bruger/OneDrive/Dokumenter/GitHub/BuildComputer/nand2tetris/projects/7/VMTranslator")
 
 
+# parser_module = importlib.import_module("src.parser.parser")
+import src.parser.parser as parser_module
+# importlib.reload(parser_module)
+
+# dicts_filepath = "nand2tetris/projects/7/VMTranslator/src/utils/dict/dict"
+# dicts = importlib.import_module(dicts_filepath.replace("/", "."))
+import src.utils.dict.dict as dicts
 
 class codewriter:
     """ writes the assembly code that implements the parsed command. """
@@ -86,7 +90,7 @@ class codewriter:
         lines = [] ## Initialize lines. 
         
 
-        with open(f"nand2tetris/projects/7/VMTranslator/src/utils/asm/{asm_location}", 'r') as asm:
+        with open(f"src/utils/asm/{asm_location}", 'r') as asm:
             parser = self.Parser(asm)
             
             lines = self.processCommands(parser)

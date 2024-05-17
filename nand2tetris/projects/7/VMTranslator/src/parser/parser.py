@@ -1,9 +1,9 @@
 
-import importlib
+# import importlib
 
-dicts_filepath = "nand2tetris/projects/7/VMTranslator/src/utils/dict/dict"
-dicts = importlib.import_module(dicts_filepath.replace("/", "."))
-
+# dicts_filepath = "src/utils/dict/dict"
+#dicts = importlib.import_module(dicts_filepath.replace("/", "."))
+import src.utils.dict.dict as dicts
 
 class parser:
     """

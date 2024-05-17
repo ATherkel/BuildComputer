@@ -5,16 +5,15 @@
 #### ---- import ----
 # https://stackoverflow.com/a/37867717/3560695
 
-import importlib
 import re
 
 ## Import parser
 ## We have to use import_module since the path contains an illegal directory name (7). 
-parser_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.parser.parser")
+# parser_module = importlib.import_module("src.parser.parser")
+import src.parser.parser as p
 
-
-writer_module = importlib.import_module("nand2tetris.projects.7.VMTranslator.src.codewriter.codewriter")
-
+# writer_module = importlib.import_module("src.codewriter.codewriter")
+import src.codewriter.codewriter as cw
 
 
 #### ---- main ----
@@ -31,8 +30,8 @@ def main(filename):
     filename_write = re.sub(regex, r"\1\2.asm", filename)
 
 
-    Parser = parser_module.parser
-    codewriter = writer_module.codewriter
+    Parser = p.parser
+    codewriter = cw.codewriter
 
     with open(filename, 'r') as file, open(filename_write, "w") as file_write:
         parser = Parser(file)
@@ -74,12 +73,14 @@ def main(filename):
         
 
 
+import importlib
 
 ## Testing
-filename = '/nand2tetris/projects/7/StackArithmetic/SimpleAdd/SimpleAdd.vm'
+filename = '.../StackArithmetic/SimpleAdd/SimpleAdd.vm'
+filename = '.../StackArithmetic/Stacktest/Stacktest.vm'
 
-importlib.reload(parser_module)
-importlib.reload(writer_module)
+importlib.reload(p)
+importlib.reload(cw)
 
 main(filename[1:])
 
