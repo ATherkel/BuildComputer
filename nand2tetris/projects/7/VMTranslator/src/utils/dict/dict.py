@@ -43,17 +43,36 @@ arithmetic = {
 }
 
 arithmetic_action = {
-    "neg" : "M = -M",
-    "not" : "M  = !M",
+    "neg" : "-", # M = -M
+    "not" : "!", # M = !M
 
     "add" : "M = M + D",
     "sub" : "M = M - D",
-    "eq"  : "D = M - D \\n D; JEQ",
-    "gt"  : "D = M - D \\n D; JGT",
-    "lt"  : "D = M - D \\n D; JLT",
+    "eq"  : "JEQ",
+    "gt"  : "JGT",
+    "lt"  : "JLT",
     "and" : "M = M & D",
     "or"  : "M = M | D",
 }
+
+compare_action = """
+D = M - D
+@TRUE{self.arithmeticNo}
+D; {action}
+D = 0
+@SP
+A = M
+M = D
+@CONTINUE{self.arithmeticNo}
+0; JMP
+(TRUE{self.arithmeticNo})
+D = -1
+@SP
+A = M
+M = D
+(CONTINUE{self.arithmeticNo})
+""".strip()
+
 
 
 """

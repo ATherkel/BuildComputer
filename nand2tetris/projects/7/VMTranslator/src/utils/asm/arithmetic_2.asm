@@ -1,14 +1,16 @@
 // ---- x {action} y ----
+// SP--
 // D = *SP
 // SP--
 // *SP = *SP {action} D
 // SP++
 
-
+// SP--
+@SP
+M = M - 1
 
 
 // D = *SP
-@SP
 A = M
 D = M
 
