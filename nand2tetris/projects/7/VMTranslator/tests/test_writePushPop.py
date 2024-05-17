@@ -8,14 +8,10 @@
 from src.codewriter import codewriter as cw
 # importlib.reload(cw)
 
-# importlib.reload(cw)
 
 testwriter = cw.codewriter("")
 
-print("---- eq ----")
-print(testwriter.writeArithmetic("lt"))
-
-# print("---- push local 7 ----")
-# testwriter.writePushPop("C_PUSH", "constant", 7)
+print("---- push local 7 ----")
+print(testwriter.writePushPop("C_PUSH", "static", 7))
 
 
