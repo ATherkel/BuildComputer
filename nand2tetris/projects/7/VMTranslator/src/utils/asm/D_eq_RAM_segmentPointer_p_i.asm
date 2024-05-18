@@ -2,4 +2,6 @@
 @{index}
 D = A
 @{segmentPointer}
-D = D + A // D = segment + i
+A = D + A
+// D <- RAM[addr]
+D = M

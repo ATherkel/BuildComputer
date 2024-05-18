@@ -57,8 +57,6 @@ class codewriter:
         return lines
 
 
-
-        
         
     def writePushPop(self, command : str, segment : str, index : int, filename : str = ""):
         """
@@ -85,7 +83,6 @@ class codewriter:
                 raise ValueError(f"push/pop pointer only valid for value 0 or 1. Input: {index}")
             segment = ["this", "that"][index] ## e.g. 'push pointer 0' means 'push this'
             index = 0 ## Silently 'push THIS' means 'push THIS 0'
-        
         elif segment == "temp" and (not 0 <= index < 7):
             raise ValueError(f"'temp' segment only valid for index values 0 to 7. Input: {index}.")
         
@@ -94,8 +91,6 @@ class codewriter:
                 raise ValueError(f"No filename supplied for push/pop static.")
             file = os.path.splitext(os.path.basename(filename))[0]
             index = file + "." + str(index)
-            print(index)
-
         elif segment in dicts.segment.keys():
             ## Used in some of the .asm templates.
             ## Contains Hack name convention for segments, e.g. local is "LCL"
@@ -105,30 +100,27 @@ class codewriter:
         # elif segment == "pointer": ## Handled above
         #     ...
 
-
-        if segment != "static":
-            lines.extend([
-                f"@{index}",
-                "D = A"
-            ])
-
-
         if command == "C_PUSH":
-            # if segment == "constant":
-            #     asm_location = "pushConstant.asm"
-            # else:
-            #     asm_location = "pushSegment.asm"
-            
-            if segment != "constant":
-                # RAM[SP] = index
-                # SP++
-                lines.extend(self.processCommands(parser, segment = segment, segmentPointer = segmentPointer, index = index))
-            asm_location = "pushSegment.asm"
+            if segment in ["constant", "static"]:
+                # D <- index
+                lines.extend(self.processAsm("D_eq_i.asm", index = index))
+            elif segment in dicts.segment.keys(): # local, argument, this, that, temp
+                # addr <- segmentPointer + index
+                # D <- RAM[addr]
+                lines.extend(self.processAsm("D_eq_RAM_segmentPointer_p_i.asm",index = index, segmentPointer = segmentPointer))
+            else:
+                raise ValueError(f"Segment = '{segment}' not handled.")
+            ## RAM[SP] <- D
+            ## SP++ 
+            lines.extend(self.processAsm("RAM_SP_eq_D.asm"))
+            lines.extend(self.processAsm("SPpp.asm"))
+
 
         elif command == "C_POP":
-            asm_location = "popSegment.asm"
             if segment == "constant":
                 raise ValueError("Cannot pop constant.")
+            elif segment in dicts.segment.keys():
+                ...
 
             
         else:
@@ -136,7 +128,7 @@ class codewriter:
         
         
 
-        return self.processAsm(segment, index, segmentPointer, lines, asm_location)
+        return lines
 
 
     
@@ -167,10 +159,10 @@ class codewriter:
         
         return lines
 
-    def processAsm(self, segment : str, index : str|int, segmentPointer, lines, asm_location):
-        with open(f"src/utils/asm/{asm_location}", 'r') as asm:
+    def processAsm(self, asm_file : str, **kwargs):
+        with open(f"src/utils/asm/{asm_file}", 'r') as asm:
             parser = self.Parser(asm)
-            lines = self.processCommands(parser, segment = segment, segmentPointer = segmentPointer, index = index)
+            lines = self.processCommands(parser, **kwargs)
         return lines
         
     
