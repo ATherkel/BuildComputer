@@ -85,14 +85,8 @@ class codewriter:
         ##  First handle 'pointer' logic translation to THIS/THAT
         ##  Also handle temp out of bounds.
         ##  Also raise error if trying to pop constant
-        if segment == "pointer":
-            if index not in [0, 1]:
-                raise ValueError(f"push/pop pointer only valid for value 0 or 1. Input: {index}.")
-            segment = ["this", "that"][index] ## e.g. 'push pointer 0' means 'push this'
-            index = 0 ## Silently 'push THIS' means 'push THIS 0'
-            
 
-        elif segment == "temp" and (not 0 <= index < 7):
+        if segment == "temp" and (not 0 <= index < 7):
             raise ValueError(f"'temp' segment only valid for index values 0 to 7. Input: {index}.")
         elif command == "C_POP" and segment == "constant":
             raise ValueError("Cannot pop constant.")
@@ -115,6 +109,25 @@ class codewriter:
         elif segment == "constant":
             # D <- addr
             lines.extend(self.processAsm("D_eq_i.asm", index = index))
+
+        elif segment == "temp":
+            # addr <- 5 + index
+            # D <- addr
+            index += dicts.segment[segment]
+
+            if command == "C_PUSH":
+                lines.extend(self.processAsm("D_eq_RAM_i.asm", index = index))
+            else: # command == "C_POP"
+                lines.extend(self.processAsm("D_eq_i.asm", index = index))
+
+        elif segment == "pointer":
+            if index not in [0, 1]:
+                raise ValueError(f"push/pop pointer only valid for value 0 or 1. Input: {index}.")
+            segment = ["this", "that"][index] ## e.g. 'push pointer 0' means 'push this'
+            segmentPointer = dicts.segment[segment]
+            index = 0 ## Silently 'push THIS' means 'push THIS 0'
+
+            lines.extend(self.processAsm("D_eq_segmentPointer.asm", segmentPointer = segmentPointer))
 
         elif segment in dicts.segment.keys():
             ## Used in some of the .asm templates.
