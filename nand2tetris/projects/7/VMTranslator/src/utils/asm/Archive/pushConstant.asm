@@ -1,4 +1,4 @@
-// ---- push {segment} {index} ----
+// ---- push constant {index} ----
 
 // addr = segment + i, *SP = *addr, SP++
 
@@ -8,9 +8,9 @@
 D = A
 
 // Not used if segment is 'constant'
-@{segmentPointer}
-A = D + M
-D = M
+//@{segmentPointer}
+//A = D + M
+//D = M
 
 // RAM[SP] = RAM[addr]
 @SP
