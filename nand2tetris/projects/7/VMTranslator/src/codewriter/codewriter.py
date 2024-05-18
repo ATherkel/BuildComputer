@@ -77,50 +77,76 @@ class codewriter:
         segmentPointer = None ## Initialize - passed to self.processCommands but not always used.
         lines = [] ## Initialize lines. 
 
-        ## First handle 'pointer' logic translation to THIS/THAT
+        ## Raise errors:
+
+        ## Wrong command
+        if command not in ["C_PUSH", "C_POP"]:
+            raise ValueError(f"command: '{command}' not allowed for writePushPop. Only takes 'C_PUSH' or 'C_POP'.")
+        ##  First handle 'pointer' logic translation to THIS/THAT
+        ##  Also handle temp out of bounds.
+        ##  Also raise error if trying to pop constant
         if segment == "pointer":
             if index not in [0, 1]:
-                raise ValueError(f"push/pop pointer only valid for value 0 or 1. Input: {index}")
+                raise ValueError(f"push/pop pointer only valid for value 0 or 1. Input: {index}.")
             segment = ["this", "that"][index] ## e.g. 'push pointer 0' means 'push this'
             index = 0 ## Silently 'push THIS' means 'push THIS 0'
+            
+
         elif segment == "temp" and (not 0 <= index < 7):
             raise ValueError(f"'temp' segment only valid for index values 0 to 7. Input: {index}.")
-        
-        elif segment == "static":
+        elif command == "C_POP" and segment == "constant":
+            raise ValueError("Cannot pop constant.")
+
+        ## New if-block
+        if segment == "static":
             if filename == "":
                 raise ValueError(f"No filename supplied for push/pop static.")
             file = os.path.splitext(os.path.basename(filename))[0]
             index = file + "." + str(index)
+            
+            if command == "C_PUSH":
+                # addr <- filename.index
+                # D <- RAM[addr]
+                lines.extend(self.processAsm("D_eq_RAM_i.asm", index = index))
+            else: # command == "C_POP"
+                # addr <- filename.index
+                lines.extend(self.processAsm("D_eq_i.asm", index = index))
+
+        elif segment == "constant":
+            # D <- addr
+            lines.extend(self.processAsm("D_eq_i.asm", index = index))
+
         elif segment in dicts.segment.keys():
             ## Used in some of the .asm templates.
             ## Contains Hack name convention for segments, e.g. local is "LCL"
             segmentPointer = dicts.segment[segment]
-        # elif segment == "temp":
-        #     ...
-        # elif segment == "pointer": ## Handled above
-        #     ...
 
-        if command == "C_PUSH":
-            if segment in ["constant", "static"]:
-                # D <- index
-                lines.extend(self.processAsm("D_eq_i.asm", index = index))
-            elif segment in dicts.segment.keys(): # local, argument, this, that, temp
+            if command == "C_PUSH":
                 # addr <- segmentPointer + index
                 # D <- RAM[addr]
                 lines.extend(self.processAsm("D_eq_RAM_segmentPointer_p_i.asm",index = index, segmentPointer = segmentPointer))
-            else:
-                raise ValueError(f"Segment = '{segment}' not handled.")
+            else: #command == "C_POP":
+                # D <- addr
+                lines.extend(self.processAsm("D_eq_segmentPointer_p_i.asm", index = index, segmentPointer = segmentPointer))
+        else:
+            raise ValueError(f"Segment = '{segment}' not handled.")
+
+        if command == "C_PUSH":
             ## RAM[SP] <- D
             ## SP++ 
             lines.extend(self.processAsm("RAM_SP_eq_D.asm"))
             lines.extend(self.processAsm("SPpp.asm"))
-
-
         elif command == "C_POP":
             if segment == "constant":
                 raise ValueError("Cannot pop constant.")
-            elif segment in dicts.segment.keys():
-                ...
+            
+            ## SP--
+            # R13 <- D                 # R13_eq_D.asm
+            # RAM[R13] <- RAM[SP]      # RAM_R13_eq_RAM_SP.asm
+            lines.extend(self.processAsm("SPmm.asm"))
+            lines.extend(self.processAsm("R13_eq_D.asm"))
+            lines.extend(self.processAsm("RAM_R13_eq_RAM_SP.asm"))
+
 
             
         else:
