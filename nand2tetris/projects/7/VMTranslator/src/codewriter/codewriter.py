@@ -1,5 +1,5 @@
 
-import sys
+import os
 # import importlib
 
 # sys.path.append("C:/Users/Bruger/OneDrive/Dokumenter/GitHub/BuildComputer/nand2tetris/projects/7/VMTranslator")
@@ -60,53 +60,85 @@ class codewriter:
 
         
         
-    def writePushPop(self, command : str, segment : str, index : int):
+    def writePushPop(self, command : str, segment : str, index : int, filename : str = ""):
         """
         Arguments
         ----
             command : ('C_PUSH' or 'C_POP')
             segment : constant, local etc.
             index   : pointer number in the segment
+            filename: Name of file - used for push/pop static i
         Function
         ----
         Writes to the output file the assembly code that implements the given command,
         where command is either C_PUSH or C_POP.
+
+        If push/pop static i from filename.vm, convert to push/pop filename.i 
         """
         
         segmentPointer = None ## Initialize - passed to self.processCommands but not always used.
+        lines = [] ## Initialize lines. 
 
         ## First handle 'pointer' logic translation to THIS/THAT
         if segment == "pointer":
+            if index not in [0, 1]:
+                raise ValueError(f"push/pop pointer only valid for value 0 or 1. Input: {index}")
             segment = ["this", "that"][index] ## e.g. 'push pointer 0' means 'push this'
             index = 0 ## Silently 'push THIS' means 'push THIS 0'
+        
+        elif segment == "temp" and (not 0 <= index < 7):
+            raise ValueError(f"'temp' segment only valid for index values 0 to 7. Input: {index}.")
+        
+        elif segment == "static":
+            if filename == "":
+                raise ValueError(f"No filename supplied for push/pop static.")
+            file = os.path.splitext(os.path.basename(filename))[0]
+            index = file + "." + str(index)
+            print(index)
+
+        elif segment in dicts.segment.keys():
+            ## Used in some of the .asm templates.
+            ## Contains Hack name convention for segments, e.g. local is "LCL"
+            segmentPointer = dicts.segment[segment]
+        # elif segment == "temp":
+        #     ...
+        # elif segment == "pointer": ## Handled above
+        #     ...
+
+
+        if segment != "static":
+            lines.extend([
+                f"@{index}",
+                "D = A"
+            ])
+
 
         if command == "C_PUSH":
+            # if segment == "constant":
+            #     asm_location = "pushConstant.asm"
+            # else:
+            #     asm_location = "pushSegment.asm"
+            
+            if segment != "constant":
+                # RAM[SP] = index
+                # SP++
+                lines.extend(self.processCommands(parser, segment = segment, segmentPointer = segmentPointer, index = index))
+            asm_location = "pushSegment.asm"
+
+        elif command == "C_POP":
+            asm_location = "popSegment.asm"
             if segment == "constant":
-                asm_location = "pushConstant.asm"
-            elif segment in ["local", "argument", "this", "that", "temp"]:
-                ## Used in some of the .asm templates.
-                ## Contains Hack name convention for segments, e.g. local is "LCL"
-                segmentPointer = dicts.segment[segment]
-                asm_location = "pushSegment.asm"
-            elif segment == "static":
-                asm_location = "pushStatic.asm"
-            # elif segment == "temp":
-            #     ...
-            # elif segment == "pointer": ## Handled above
-            #     ...
-        # elif command == "C_POP":
-        #     ...
+                raise ValueError("Cannot pop constant.")
+
+            
         else:
             raise KeyError(f"Unexpected command '{command}' in writePushPop (should be 'C_PUSH' or 'C_POP')")
         
-        lines = [] ## Initialize lines. 
         
 
-        with open(f"src/utils/asm/{asm_location}", 'r') as asm:
-            parser = self.Parser(asm)
-            
-            lines = self.processCommands(parser, segment = segment, segmentPointer = segmentPointer, index = index)
-        return lines
+        return self.processAsm(segment, index, segmentPointer, lines, asm_location)
+
+
     
     def processCommands(self, parser, **kwargs):
         """
@@ -135,6 +167,10 @@ class codewriter:
         
         return lines
 
-
+    def processAsm(self, segment : str, index : str|int, segmentPointer, lines, asm_location):
+        with open(f"src/utils/asm/{asm_location}", 'r') as asm:
+            parser = self.Parser(asm)
+            lines = self.processCommands(parser, segment = segment, segmentPointer = segmentPointer, index = index)
+        return lines
         
     
