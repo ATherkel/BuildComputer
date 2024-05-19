@@ -127,7 +127,10 @@ class codewriter:
             segmentPointer = dicts.segment[segment]
             index = 0 ## Silently 'push THIS' means 'push THIS 0'
 
-            lines.extend(self.processAsm("D_eq_segmentPointer.asm", segmentPointer = segmentPointer))
+            if command == "C_PUSH":
+                lines.extend(self.processAsm("D_eq_RAM_segmentPointer.asm", segmentPointer = segmentPointer))
+            else: # command == "C_POP"
+                lines.extend(self.processAsm("D_eq_segmentPointer.asm", segmentPointer = segmentPointer))
 
         elif segment in dicts.segment.keys():
             ## Used in some of the .asm templates.
