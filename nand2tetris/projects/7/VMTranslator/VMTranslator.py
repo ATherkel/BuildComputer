@@ -23,7 +23,7 @@ import src.codewriter.codewriter as cw
 
 
 def main(filename = None):
-
+    print("VMTranslator start ...")
     if filename is None:
         # Check if the correct number of command-line arguments are provided
         if len(sys.argv) != 2:
@@ -44,6 +44,8 @@ def main(filename = None):
     with open(filename, 'r') as file, open(filename_write, "w") as file_write:
         parser = Parser(file)
         writer = codewriter(file_write)
+
+        lines = None
 
         while parser.hasMoreCommands(): ## As long as file has more lines, do:
             parser.advance()            ## Go to the next line in the file.
@@ -76,6 +78,7 @@ def main(filename = None):
             file_write.write(f'// {parser.instruction}\n')
             for line in lines:
                 file_write.write(f'{line}\n')
+    print("VMTranslator finished!")
 
 
         
@@ -93,7 +96,7 @@ import importlib
 
 # main(filename[1:])
 
-if __name__ == "main":
+if __name__ == "__main__":
     main()
 
 
