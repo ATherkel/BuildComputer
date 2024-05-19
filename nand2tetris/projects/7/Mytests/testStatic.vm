@@ -1,0 +1,6 @@
+// Testing static
+
+push static 5
+push static 6
+
+add
