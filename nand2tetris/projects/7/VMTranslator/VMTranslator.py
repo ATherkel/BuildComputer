@@ -70,7 +70,7 @@ def main(filename = None):
             elif parser.commandType() in ["C_PUSH", "C_POP"]:
                 arg1 = parser.arg1()
                 arg2 = parser.arg2()
-                lines = writer.writePushPop(commandType, arg1, arg2)
+                lines = writer.writePushPop(commandType, arg1, arg2, filename = filename)
             else:
                 ...
             
